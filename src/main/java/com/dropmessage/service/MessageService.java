@@ -12,6 +12,7 @@ import com.dropmessage.repository.MessageRepository;
 
 
 
+
 @Service
 public class MessageService {
 	
@@ -34,4 +35,13 @@ public class MessageService {
 		return messageRepository.findAll();
 	}
 	
+	public ResponseEntity<Message> deleteMessageById(String email){
+		if(messageRepository.existsById(email)) {
+			messageRepository.deleteById(email);
+			return new ResponseEntity<Message>(HttpStatus.OK);
+		}
+		else {
+			return new ResponseEntity<Message>(HttpStatus.NOT_FOUND);
+		}
+	}
 }

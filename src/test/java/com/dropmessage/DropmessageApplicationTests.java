@@ -4,6 +4,8 @@ import static io.restassured.RestAssured.given;
 
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
+import org.junit.jupiter.api.MethodOrderer.OrderAnnotation;
 import org.springframework.boot.test.context.SpringBootTest;
 
 import com.dropmessage.dto.AuthRequest;
@@ -12,6 +14,7 @@ import com.dropmessage.entity.Message;
 import io.restassured.http.ContentType;
 
 @SpringBootTest
+@TestMethodOrder(OrderAnnotation.class)
 class DropmessageApplicationTests {
 
 	@Test
@@ -73,5 +76,34 @@ class DropmessageApplicationTests {
 	     .assertThat().statusCode(200);
      
 	}
+
+//Test for delete message 
+	@Test
+	@Order(4)
+	void DeleteMessageTest() {
+		AuthRequest authCheck = new AuthRequest();
+		authCheck.setEmail("pooja@gmail.com");
+		authCheck.setPassword("pooja123");
+		authCheck.setRole("Teacher");
+		
+	String tokenn = given().header("Content-type","application/json").contentType(ContentType.JSON).accept(ContentType.JSON)
+		   .body(authCheck)
+		   .when()
+		   .post("http://localhost:9192/home/login")
+		   .then()
+		   .assertThat().statusCode(200)
+		   .extract().response().asString();
+	
+     String token = "Bearer "+tokenn;
+     System.out.println(token);
+	
+     given()
+	     .header("Authorization",token).contentType(ContentType.JSON).accept(ContentType.JSON)
+	     .when()
+	     .delete("http://localhost:9194/message/delete/testmessage@gmail.com")
+	     .then()
+	     .assertThat().statusCode(200)
+	     .extract().response();
+}
 	
 }
